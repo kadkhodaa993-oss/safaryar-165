@@ -1716,7 +1716,10 @@ body.theme-dark .sf-empty-state{box-shadow:0 4px 18px rgba(0,0,0,.16);}
 <script id="sefaryar-support-bot-config">
 /* PHASE 165 — Public endpoint URL only. Never put an API key in this file.
    Set supportBotApiUrl after deploying the secure backend, e.g. '/api/support-bot'. */
-window.SEFARYAR_CONFIG = window.SEFARYAR_CONFIG || { supportBotApiUrl: '' };
+window.SEFARYAR_CONFIG = {
+  ...(window.SEFARYAR_CONFIG || {}),
+  supportBotApiUrl: 'https://sefaryar-support-bot2.onrender.com/api/support-bot'
+};
 </script>
 </head>
 <body>
