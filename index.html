@@ -13367,14 +13367,15 @@ App.supportBotSend = async function(event){
       response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},credentials:'same-origin',signal:controller?controller.signal:undefined,body:JSON.stringify({messages:messages.slice(-12).map(m=>({role:m.role,content:m.content}))})});
     } finally { if(timer) clearTimeout(timer); }
     let data={}; try{data=await response.json();}catch(_){data={};}
-    if(!response.ok) throw new Error('bot-endpoint-failed');
+    if(!response.ok) throw new Error('bot-endpoint-failed (HTTP '+response.status+')');
     const answer=String(data.answer||data.output_text||'').trim().slice(0,6000);
     if(!answer) throw new Error('empty-bot-answer');
     const suggest=!!data.suggestSupport || /پشتیبانی انسانی|پیام به پشتیبانی|ثبت گزارش خطا|گزارش خطا را ثبت|نمی‌توانم با اطمینان/.test(answer);
     messages.push({role:'assistant',content:answer,at:Date.now(),suggestSupport:suggest});
   }catch(err){ 
       console.error('[Sefaryar Support Bot] Request failed:', err?.name, err?.message, err);
-    const msg=(err && err.name==='AbortError')?'پاسخ‌گویی بیش از حد طول کشید. لطفاً دوباره تلاش کن یا با پشتیبانی تماس بگیر.':'در حال حاضر اتصال بات برقرار نشد. ممکن است سرویس پیکربندی نشده یا موقتاً در دسترس نباشد. می‌توانی از پشتیبانی انسانی کمک بگیری.';
+    const detail=String(err?.name||'Error')+': '+String(err?.message||'unknown').slice(0,160);
+const msg='خطای تشخیصی بات: '+detail;
     messages.push({role:'assistant',content:msg,at:Date.now(),suggestSupport:true});
   }finally{
     SUPPORT_BOT_PENDING.delete(uid);
