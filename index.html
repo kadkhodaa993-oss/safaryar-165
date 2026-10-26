@@ -13372,11 +13372,16 @@ App.supportBotSend = async function(event){
     if(!answer) throw new Error('empty-bot-answer');
     const suggest=!!data.suggestSupport || /پشتیبانی انسانی|پیام به پشتیبانی|ثبت گزارش خطا|گزارش خطا را ثبت|نمی‌توانم با اطمینان/.test(answer);
     messages.push({role:'assistant',content:answer,at:Date.now(),suggestSupport:suggest});
-  }catch(err){ 
-      console.error('[Sefaryar Support Bot] Request failed:', err?.name, err?.message, err);
+  }catch(err){
     const detail=String(err?.name||'Error')+': '+String(err?.message||'unknown').slice(0,160);
-const msg='خطای تشخیصی بات: '+detail;
+    console.error('[Sefaryar Support Bot] Request failed:',detail,err);
+
+    const msg=(err && err.name==='AbortError')
+      ? 'پاسخ‌گویی بیش از حد طول کشید. لطفاً دوباره تلاش کن یا از پشتیبانی انسانی کمک بگیر.'
+      : 'در حال حاضر امکان پاسخ‌گویی وجود ندارد. لطفاً دوباره تلاش کن یا از پشتیبانی انسانی کمک بگیر.';
+
     messages.push({role:'assistant',content:msg,at:Date.now(),suggestSupport:true});
+  
   }finally{
     SUPPORT_BOT_PENDING.delete(uid);
     if(parseHash().route==='support-bot') render();
