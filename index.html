@@ -13372,7 +13372,8 @@ App.supportBotSend = async function(event){
     if(!answer) throw new Error('empty-bot-answer');
     const suggest=!!data.suggestSupport || /پشتیبانی انسانی|پیام به پشتیبانی|ثبت گزارش خطا|گزارش خطا را ثبت|نمی‌توانم با اطمینان/.test(answer);
     messages.push({role:'assistant',content:answer,at:Date.now(),suggestSupport:suggest});
-  }catch(err){
+  }catch(err){ 
+      console.error('[Sefaryar Support Bot] Request failed:', err?.name, err?.message, err);
     const msg=(err && err.name==='AbortError')?'پاسخ‌گویی بیش از حد طول کشید. لطفاً دوباره تلاش کن یا با پشتیبانی تماس بگیر.':'در حال حاضر اتصال بات برقرار نشد. ممکن است سرویس پیکربندی نشده یا موقتاً در دسترس نباشد. می‌توانی از پشتیبانی انسانی کمک بگیری.';
     messages.push({role:'assistant',content:msg,at:Date.now(),suggestSupport:true});
   }finally{
